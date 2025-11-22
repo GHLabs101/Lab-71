@@ -1,0 +1,45 @@
+name: Use Workflow Commands
+
+on:
+  workflow_dispatch:
+    inputs:
+      who:
+        description: "Who to greet"
+        required: false
+        default: "world"
+      level:
+        description: "annotation level (info|warn|error)"
+        required: false
+        default: "info"
+
+jobs:
+  test-commands:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run container output action
+        id: container
+        uses: ./.github/actions/container-output-action
+        with:
+          who: ${{ inputs.who }}
+
+      - name: Show container output
+        run: |
+          echo "container shout: ${{ steps.container.outputs.shout }}"
+
+      - name: Run composite annotate action
+        id: composite
+        uses: ./.github/actions/composite-annotate-action
+        with:
+          level: ${{ inputs.level }}
+
+      - name: Show composite output
+        run: |
+          echo "composite status: ${{ steps.composite.outputs.status }}"
+
+      - name: Fail if container returned failure (optional check)
+        if: ${{ always() }}
+        run: |
+          echo "Container exit code already controls job status; inspect previous steps for errors"
