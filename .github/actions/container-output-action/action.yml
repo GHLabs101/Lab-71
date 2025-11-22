@@ -1,0 +1,14 @@
+name: "Container Output Action"
+description: "Writes uppercase output and fails on input 'fail'"
+inputs:
+  who:
+    required: false
+    default: "world"
+runs:
+  using: "docker"
+  image: "Dockerfile"
+  args:
+    - ${{ inputs.who }}
+outputs:
+  shout:
+    description: "Uppercased greeting"
