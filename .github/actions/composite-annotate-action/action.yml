@@ -1,0 +1,28 @@
+name: "Composite Annotate Action"
+description: "Shows annotations and sets an output"
+inputs:
+  level:
+    description: "level to warn (info|warn|error)"
+    required: false
+    default: "info"
+outputs:
+  status:
+    description: "Status string"
+runs:
+  using: "composite"
+  steps:
+    - id: annotate
+      shell: bash
+      run: |
+        if [ "${{ inputs.level }}" = "warn" ]; then
+          echo "::warning::This is a user-level warning"
+        elif [ "${{ inputs.level }}" = "error" ]; then
+          echo "::error::This is a user-level error"
+        else
+          echo "::debug::Info-level debug message"
+        fi
+
+    - id: set-out
+      shell: bash
+      run: |
+        echo "status=processed-${{ inputs.level }}" >> "${GITHUB_OUTPUT}"
